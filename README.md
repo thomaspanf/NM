@@ -1,2 +1,2 @@
-# stuff i'm currently working with 
+# stuff I'm currently working with 
  
