@@ -1,6 +1,6 @@
 import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent } from "forta-agent";
 import { TestTransactionEvent, createAddress, generalTestFindingGenerator } from "./tests.utils";
-import provideFunctionCallsDetectorHandler from "./detectfunctioncall";
+import provideFunctionCallsDetectorHandler from "./agent";
 import { AbiItem } from "web3-utils";
 import { encodeFunctionSignature, encodeFunctionCall, encodeParameters, decodeParameter } from "./utils";
 import BigNumber from "bignumber.js";
