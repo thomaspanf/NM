@@ -1,4 +1,4 @@
-# Large Tether Transfer Agent
+# Detect if Nethermind Forta Deployer account deploys a new bot 
 
 ## Description
 
