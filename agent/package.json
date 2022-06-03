@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "bot to detect createAgent function called on Nethermind Deployer contract",
   "chainIds": [
-    1
+    137
   ],
   "scripts": {
     "build": "tsc",
