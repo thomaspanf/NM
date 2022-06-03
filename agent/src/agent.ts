@@ -4,6 +4,9 @@ import {
   FindingSeverity,
   FindingType,
   ethers,
+  TransactionEvent,
+  createTransactionEvent,
+  getTransactionReceipt,
 } from 'forta-agent';
 import {
   FindingGenerator,
@@ -13,6 +16,7 @@ import {
 export const POLYGON_ADDRESS = "0x61447385B019187daa48e91c55c02AF1F1f3F863";
 const abi = ["function createAgent(uint256 agentId, address owner, string metadata, uint256[] chainIds) public"];
 export const iface = new ethers.utils.Interface(abi);
+
 
 const createFindingGenerator = (alertId: string, address: string): FindingGenerator =>
   (metadata: { [key: string]: any } | undefined): Finding =>
@@ -38,6 +42,8 @@ export const provideCreateAgent = (
     to: address,
   }
 );
+
+console.log(createFindingGenerator); 
 
 export default {
   handleTransaction: provideCreateAgent(
