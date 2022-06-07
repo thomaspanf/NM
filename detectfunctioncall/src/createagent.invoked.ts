@@ -6,7 +6,7 @@ async function handleTransaction(txEvent: TransactionEvent) {
 
   const functionCalls = txEvent.filterFunction(CREATEAGENT_ABI, FORTA_ADDRESS)
 
-  if (!functionCalls.length) return findings
+  if (txEvent.to != FORTA_ADDRESS) return findings
 
   functionCalls.forEach((call) => {
 

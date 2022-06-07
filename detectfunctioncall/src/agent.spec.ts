@@ -2,9 +2,7 @@ import {
     FindingType,
     FindingSeverity,
     Finding,
-    HandleTransaction,
     TransactionEvent,
-    Transaction,
 } from "forta-agent";
 
 import agent from "./agent";
