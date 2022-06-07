@@ -1,4 +1,4 @@
 {
-    "jsonRpcUrl": "https://polygon-rpc.com",
-    "traceRpcUrl": "https://polygon-rpc.com"
+    "jsonRpcUrl": "https://polygon-mainnet.g.alchemy.com/v2/1HAkGq6qt4mnY7hEjiWKJI3N_I4LskC3",
+    "traceRpcUrl": "https://polygon-mainnet.g.alchemy.com/v2/1HAkGq6qt4mnY7hEjiWKJI3N_I4LskC3"
  }
