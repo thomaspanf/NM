@@ -1,17 +1,16 @@
 import { HandleTransaction, TransactionEvent } from 'forta-agent'
-import dripInvokedAgent from './drip.invoked'
+import createAgent from './createagent.invoked'
 
 type Agent = {
   handleTransaction: HandleTransaction,
 }
 
 function provideHandleTransaction(
-  dripInvokedAgent: Agent,
+  createAgent: Agent,
 ): HandleTransaction {
-
   return async function handleTransaction(txEvent: TransactionEvent) {
     const findings = (await Promise.all([
-      dripInvokedAgent.handleTransaction(txEvent)
+      createAgent.handleTransaction(txEvent)
     ])).flat()
 
     return findings
@@ -19,5 +18,5 @@ function provideHandleTransaction(
 }
 
 export default {
-  handleTransaction: provideHandleTransaction(dripInvokedAgent),
+  handleTransaction: provideHandleTransaction(createAgent),
 }

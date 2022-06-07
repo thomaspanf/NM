@@ -1,7 +1,7 @@
 {
-  "name": "forta-compound-agent",
+  "name": "forta-detect-createagent-agent",
   "version": "0.0.1",
-  "description": "Forta Compound Agent",
+  "description": "forta-detect-createagent-agent",
   "scripts": {
     "build": "tsc",
     "start": "npm run start:dev",
@@ -21,7 +21,8 @@
   "dependencies": {
     "big-number": "^2.0.0",
     "bignumber.js": "^9.0.1",
-    "forta-agent": "^0.1.6"
+    "forta-agent": "^0.1.6",
+    "forta-agent-tools": "^2.0.7"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
