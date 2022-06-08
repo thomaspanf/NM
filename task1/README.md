@@ -2,12 +2,7 @@
 
 ## Description
 
-This agent detects transactions with large Tether transfers
-
-## Supported Chains
-
-- Ethereum
-- List any other chains this agent can support e.g. BSC
+This agent detects transactions when createAgent() is called from 0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8 (Nethermind Deployer Address) to 0xA8A26969f7Be888D020B595340c490c02ec445dD (Forta Agent Registry Contract)
 
 ## Alerts
 
@@ -21,6 +16,4 @@ Describe each of the type of alerts fired by this agent
 
 ## Test Data
 
-The agent behaviour can be verified with the following transactions:
-
-- 0x3a0f757030beec55c22cbc545dd8a844cbbb2e6019461769e1bc3f3a95d10826 (15,000 USDT)
+ 
