@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent monitors the pushes a finding when createAgent() is called from the Nethermind Deployer Account to the Forta Agent Contract
+This agent pushes a finding when createAgent() is called from the Nethermind Deployer Account to the Forta Agent Contract
 
 ## Supported Chains
 
