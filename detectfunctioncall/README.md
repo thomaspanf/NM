@@ -6,7 +6,6 @@ This agent pushes a finding when createAgent() is called from the Nethermind Dep
 
 ## Supported Chains
 
-- Ethereum
 - Polygon
 
 ## Alerts
