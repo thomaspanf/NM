@@ -1,6 +1,16 @@
-import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent } from 'forta-agent'
-import { UNI_FACTORY_ADDRESS, SWAP_EVENT, SWAP_ROUTER_ADDRESS } from './constants'
+import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent, getEthersProvider } from 'forta-agent'
+import { UNI_FACTORY_ADDRESS, SWAP_EVENT, SWAP_ROUTER_ADDRESS, POOL_INIT_CODE_HASH } from './constants'
 
+import {
+  utils
+} from 'ethers' 
+
+import {
+  Interface,
+  keccak256,
+  getCreate2Address,
+  defaultAbiCoder
+} from "ethers/lib/utils";
 
 type Agent = {
   handleTransaction: HandleTransaction,
@@ -19,6 +29,14 @@ function provideHandleTransaction(
 }
 
 
+let provider = getEthersProvider();
+
+export function checkIfUniPool() {
+  const address = getCreate2Address(UNI_FACTORY_ADDRESS, '0x0000000000000000000000000000000000000000000000000000000000000000', POOL_INIT_CODE_HASH);
+
+
+  return false
+}
 
 
 async function handleTransaction(txEvent: TransactionEvent) {
@@ -28,25 +46,22 @@ async function handleTransaction(txEvent: TransactionEvent) {
 
   if (txEvent.to != SWAP_ROUTER_ADDRESS) return findings
 
-  functionCalls.forEach((call) => {
+  functionCalls.forEach((swap) => {
 
-    const { agentId, metadata } = call.args;
+    const { sender, recipient, amount0, amount1, sqrtPriceX96, liquidity, tick } = swap.args;
 
 
-    console.log(typeof agentId); 
-    console.log(typeof metadata)
-
-    if (txEvent.from == NETHERMIND_ADDRESS) {
+    if (true) {
       findings.push(Finding.fromObject({
-        name: "function createAgent called",
-        description: `createAgent was invoked by ${txEvent.from} (Nethermind Deployer Address)`,
+        name: "Uni V3 Swap detected",
+        description: `Uni V3 Swap invoked by ${txEvent.from}`,
         alertId: "ALERT-0",
         protocol: "forta",
         severity: FindingSeverity.Low,
         type: FindingType.Info,
         metadata: {
-          from: txEvent.from,
-          metadata: metadata,
+          amount0: amount0,
+          amount1: amount1,
           //agentId: agentId
         }
       }))
