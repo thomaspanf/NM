@@ -1,9 +1,9 @@
-import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent, getEthersProvider } from 'forta-agent'
+import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent, getJsonRpcUrl } from 'forta-agent'
 import { UNI_FACTORY_ADDRESS, SWAP_EVENT, SWAP_ROUTER_ADDRESS, POOL_INIT_CODE_HASH } from './constants'
 
 import {
-  utils
-} from 'ethers' 
+  ethers
+} from "ethers"
 
 import {
   Interface,
@@ -29,13 +29,19 @@ function provideHandleTransaction(
 }
 
 
-let provider = getEthersProvider();
+let provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-export function checkIfUniPool() {
-  const address = getCreate2Address(UNI_FACTORY_ADDRESS, '0x0000000000000000000000000000000000000000000000000000000000000000', POOL_INIT_CODE_HASH);
+export function checkIfUniPool(token0: string, token1: string) {
+  const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["address","address"],[token0,token1])), POOL_INIT_CODE_HASH);
 
 
   return false
+}
+
+export function getTokenAddresses() {
+
+
+  return
 }
 
 
