@@ -1,5 +1,5 @@
 import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent, getJsonRpcUrl } from 'forta-agent'
-import { UNI_FACTORY_ADDRESS, SWAP_EVENT, SWAP_ROUTER_ADDRESS, POOL_INIT_CODE_HASH } from './constants'
+import { UNI_FACTORY_ADDRESS, SWAP_EVENT, POOL_ABI, POOL_INIT_CODE_HASH } from './constants'
 
 import {
   ethers
@@ -12,47 +12,61 @@ import {
   defaultAbiCoder
 } from "ethers/lib/utils";
 
-type Agent = {
-  handleTransaction: HandleTransaction,
-}
+// type Agent = {
+//   handleTransaction: HandleTransaction,
+// }
 
-function provideHandleTransaction(
-  createAgent: Agent,
-): HandleTransaction {
-  return async function handleTransaction(txEvent: TransactionEvent) {
-    const findings = (await Promise.all([
-      createAgent.handleTransaction(txEvent)
-    ])).flat()
+// function provideHandleTransaction(
+//   createAgent: Agent,
+// ): HandleTransaction {
+//   return async function handleTransaction(txEvent: TransactionEvent) {
+//     const findings = (await Promise.all([
+//       createAgent.handleTransaction(txEvent)
+//     ])).flat()
 
-    return findings
-  }
-}
+//     return findings
+//   }
+// }
 
 
 let provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-export function checkIfUniPool(token0: string, token1: string) {
-  const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["address","address"],[token0,token1])), POOL_INIT_CODE_HASH);
+export function get_pair_address(token0addr: string, token1addr: string) {
+  const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["address","address"],[token0addr,token1addr])), POOL_INIT_CODE_HASH);
 
-
-  return false
+  return pair_address
 }
 
-export function getTokenAddresses() {
+// async function getTokens(add: string) {
+//   const reference = new ethers.Contract(add, POOL_ABI, provider);
+//   let tokenAAddress = "";
+//   let tokenBAddress = "";
+//   let fee = "";
+//   try {
+//     tokenAAddress = await reference.token0();
+//     tokenBAddress = await reference.token1();
+//     fee = await reference.fee();
 
+//     return [tokenAAddress, tokenBAddress, fee];
+//   } catch (err) {
+//     console.log("error");
+//     return [tokenAAddress, tokenBAddress, fee];
+//   }
+// }
 
-  return
-}
-
+console.log('hello0'); 
 
 async function handleTransaction(txEvent: TransactionEvent) {
   const findings: Finding[] = []
+  console.log('hey'); 
+  const event = txEvent.filterLog(SWAP_EVENT); 
 
-  const functionCalls = txEvent.filterLog(SWAP_EVENT); 
+  event.forEach((swap) => {
 
-  if (txEvent.to != SWAP_ROUTER_ADDRESS) return findings
+    const contractAddress = swap.address; 
 
-  functionCalls.forEach((swap) => {
+    // if (contractAddress != get_pair_address(token0addr, token1aadr)) return findings
+    if(false) return findings
 
     const { sender, recipient, amount0, amount1, sqrtPriceX96, liquidity, tick } = swap.args;
 
@@ -79,7 +93,7 @@ async function handleTransaction(txEvent: TransactionEvent) {
 
 export default {
   handleTransaction,
-  provideHandleTransaction
+  //provideHandleTransaction
 }
 
 
