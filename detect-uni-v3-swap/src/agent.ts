@@ -1,28 +1,23 @@
-import { Finding, FindingSeverity, FindingType, HandleTransaction, TransactionEvent, getJsonRpcUrl } from 'forta-agent'
+import { Finding, FindingSeverity, FindingType, TransactionEvent, getJsonRpcUrl } from 'forta-agent'
 import { UNI_FACTORY_ADDRESS, SWAP_EVENT, POOL_ABI, POOL_INIT_CODE_HASH } from './constants'
 
 import {
-  ethers
+  ethers,
+  BigNumberish,
 } from "ethers"
 
 import {
   keccak256,
   getCreate2Address,
   defaultAbiCoder,
-  solidityPack
 } from "ethers/lib/utils";
 
 let provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-export function get_pair_address(token0addr: string, token1addr: string) {
-  //const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["string","string"],[token0addr,token1addr])), POOL_INIT_CODE_HASH);
-
-  const salt = solidityPack(["string", "string"], [token0addr, token1addr]); 
-
-
+export function get_pair_address(token0addr: string, token1addr: string, fee: BigNumberish) {
   const pair_address = getCreate2Address(
     UNI_FACTORY_ADDRESS,
-    salt,
+    keccak256(defaultAbiCoder.encode(["address","address","uint24"],[token0addr,token1addr,fee])),
     POOL_INIT_CODE_HASH
   )
   return pair_address.toLowerCase();
@@ -40,36 +35,37 @@ async function handleTransaction(txEvent: TransactionEvent) {
     const poolAddr = swap.address.toLowerCase(); 
 
     let contractInstance = new ethers.Contract(poolAddr, POOL_ABI, provider);
-    console.log("contract address = " + poolAddr); 
+    //console.log("contract address = " + poolAddr); 
+
 
     let token0Addr = "";
     let token1Addr = ""; 
+    let fee = ""; 
     try {
       token0Addr = await contractInstance.token0();
       token1Addr = await contractInstance.token1(); 
+      fee = await contractInstance.fee(); 
     } catch (e) {
       console.log("error");
     } 
-    console.log("token0: " + token0Addr); 
-    console.log("token1: " + token1Addr); 
 
-    console.log("create2address = " + get_pair_address(token0Addr, token1Addr));
+    if (poolAddr !==get_pair_address(token0Addr, token1Addr,fee)) return findings
 
-    //if (poolAddr !== get_pair_address(token0addr, token1addr)) return findings
-
-    const { sender, recipient, amount0, amount1, sqrtPriceX96, liquidity, tick } = swap.args;
+    const { sender, recipient } = swap.args;
 
     if (true) {
       findings.push(Finding.fromObject({
         name: "Uni V3 Swap detected",
         description: `Uni V3 Swap invoked by ${txEvent.from}`,
         alertId: "ALERT-0",
-        protocol: "forta",
+        protocol: "Ethereum",
         severity: FindingSeverity.Low,
         type: FindingType.Info,
         metadata: {
-          amount0: amount0,
-          amount1: amount1,
+          interacted_with: sender, 
+          recipient: recipient,
+          token0Addr: token0Addr,
+          token1Addr: token1Addr
         }
       }))
     }
@@ -80,18 +76,3 @@ async function handleTransaction(txEvent: TransactionEvent) {
 export default {
   handleTransaction,
 }
-
-
-// async function getTokens(poolAddr: string) {
-//   const reference = new ethers.Contract(poolAddr, POOL_ABI, provider);
-//   let tokenAAddress = "";
-//   let tokenBAddress = "";
-//   try {
-//     tokenAAddress = await reference.token0();
-//     tokenBAddress = await reference.token1();
-//     return [tokenAAddress, tokenBAddress]; 
-//   } catch (err) {
-//     console.log("error");
-//     return [tokenAAddress, tokenBAddress];
-//   }
-// }
