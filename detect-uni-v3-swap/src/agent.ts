@@ -6,70 +6,58 @@ import {
 } from "ethers"
 
 import {
-  Interface,
   keccak256,
   getCreate2Address,
-  defaultAbiCoder
+  defaultAbiCoder,
+  solidityPack
 } from "ethers/lib/utils";
-
-// type Agent = {
-//   handleTransaction: HandleTransaction,
-// }
-
-// function provideHandleTransaction(
-//   createAgent: Agent,
-// ): HandleTransaction {
-//   return async function handleTransaction(txEvent: TransactionEvent) {
-//     const findings = (await Promise.all([
-//       createAgent.handleTransaction(txEvent)
-//     ])).flat()
-
-//     return findings
-//   }
-// }
-
 
 let provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
 export function get_pair_address(token0addr: string, token1addr: string) {
-  const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["address","address"],[token0addr,token1addr])), POOL_INIT_CODE_HASH);
+  //const pair_address = getCreate2Address(UNI_FACTORY_ADDRESS, keccak256(defaultAbiCoder.encode(["string","string"],[token0addr,token1addr])), POOL_INIT_CODE_HASH);
 
-  return pair_address
+  const salt = solidityPack(["string", "string"], [token0addr, token1addr]); 
+
+
+  const pair_address = getCreate2Address(
+    UNI_FACTORY_ADDRESS,
+    salt,
+    POOL_INIT_CODE_HASH
+  )
+  return pair_address.toLowerCase();
 }
 
-// async function getTokens(add: string) {
-//   const reference = new ethers.Contract(add, POOL_ABI, provider);
-//   let tokenAAddress = "";
-//   let tokenBAddress = "";
-//   let fee = "";
-//   try {
-//     tokenAAddress = await reference.token0();
-//     tokenBAddress = await reference.token1();
-//     fee = await reference.fee();
-
-//     return [tokenAAddress, tokenBAddress, fee];
-//   } catch (err) {
-//     console.log("error");
-//     return [tokenAAddress, tokenBAddress, fee];
-//   }
-// }
-
-console.log('hello0'); 
-
 async function handleTransaction(txEvent: TransactionEvent) {
+  
   const findings: Finding[] = []
-  console.log('hey'); 
   const event = txEvent.filterLog(SWAP_EVENT); 
 
-  event.forEach((swap) => {
+  
+  await Promise.all( //waits for each promise to resolve 
+    event.map(async swap => { //event.map returns array in which each array element is a promise 
+  // event.forEach(async (swap) => { //incorrect await will return a promise and forEach will end the loop there. 
+    const poolAddr = swap.address.toLowerCase(); 
 
-    const contractAddress = swap.address; 
+    let contractInstance = new ethers.Contract(poolAddr, POOL_ABI, provider);
+    console.log("contract address = " + poolAddr); 
 
-    // if (contractAddress != get_pair_address(token0addr, token1aadr)) return findings
-    if(false) return findings
+    let token0Addr = "";
+    let token1Addr = ""; 
+    try {
+      token0Addr = await contractInstance.token0();
+      token1Addr = await contractInstance.token1(); 
+    } catch (e) {
+      console.log("error");
+    } 
+    console.log("token0: " + token0Addr); 
+    console.log("token1: " + token1Addr); 
+
+    console.log("create2address = " + get_pair_address(token0Addr, token1Addr));
+
+    //if (poolAddr !== get_pair_address(token0addr, token1addr)) return findings
 
     const { sender, recipient, amount0, amount1, sqrtPriceX96, liquidity, tick } = swap.args;
-
 
     if (true) {
       findings.push(Finding.fromObject({
@@ -82,18 +70,28 @@ async function handleTransaction(txEvent: TransactionEvent) {
         metadata: {
           amount0: amount0,
           amount1: amount1,
-          //agentId: agentId
         }
       }))
     }
-  });
+  }));
   return findings;
 };
 
-
 export default {
   handleTransaction,
-  //provideHandleTransaction
 }
 
 
+// async function getTokens(poolAddr: string) {
+//   const reference = new ethers.Contract(poolAddr, POOL_ABI, provider);
+//   let tokenAAddress = "";
+//   let tokenBAddress = "";
+//   try {
+//     tokenAAddress = await reference.token0();
+//     tokenBAddress = await reference.token1();
+//     return [tokenAAddress, tokenBAddress]; 
+//   } catch (err) {
+//     console.log("error");
+//     return [tokenAAddress, tokenBAddress];
+//   }
+// }
