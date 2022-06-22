@@ -35,9 +35,6 @@ async function handleTransaction(txEvent: TransactionEvent) {
     const poolAddr = swap.address.toLowerCase(); 
 
     let contractInstance = new ethers.Contract(poolAddr, POOL_ABI, provider);
-    //console.log("contract address = " + poolAddr); 
-
-
     let token0Addr = "";
     let token1Addr = ""; 
     let fee = ""; 
@@ -50,10 +47,9 @@ async function handleTransaction(txEvent: TransactionEvent) {
     } 
 
     if (poolAddr !==get_pair_address(token0Addr, token1Addr,fee)) return findings
-
     const { sender, recipient } = swap.args;
 
-    if (true) {
+    if(true){
       findings.push(Finding.fromObject({
         name: "Uni V3 Swap detected",
         description: `Uni V3 Swap invoked by ${txEvent.from}`,
