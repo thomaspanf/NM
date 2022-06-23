@@ -9,8 +9,8 @@ This agent detects transactions that emit a swap event originating from uni v3 c
 - Ethereum
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
-
+>ALERT-0 
+Fired when a swap event is detected on a Uniswap v3 pool
 
 ## Test Data
 

@@ -3,7 +3,6 @@ import {
     FindingSeverity,
     Finding,
     TransactionEvent,
-    ethers,
 } from "forta-agent"; 
 
 import agent from "./agent"; 
@@ -71,15 +70,9 @@ const createFinding = (
     },
 });
 
-
 describe("Nethermind bot deploy bot test suite", () => {
 
     describe("handleTransaction", () => {
-
-
-        console.log("testtt"); 
-        console.log(createFinding(MOCK_FROM_ADDR,MOCK_SENDER,MOCK_RECIPIENT,MOCK_TOKEN0,MOCK_TOKEN1)); 
-
 
         it("should return empty finding if no swap is detectred", async () => {
             const tx: TransactionEvent = new TestTransactionEvent();
@@ -89,23 +82,20 @@ describe("Nethermind bot deploy bot test suite", () => {
         });
         
         it("should return finding when swap on uni v3 is detected", async () => {
-            const tx: TransactionEvent = new TestTransactionEvent();
-            const findings = await agent.handleTransaction(tx); 
-            
-            console.log("testinggggg"); 
-            console.log(findings); 
+            //not sure how to push a mock transaction event properly. This handleTransaction(tx) returns []
+            const tx: TransactionEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT);
 
-            // const metadata = {
-            //     interacted_with: MOCK_INTERACTED_WITH,
-            //     recipient: MOCK_RECIPIENT,
-            //     token0Addr: MOCK_TOKEN0,
-            //     token1Addr: MOCK_TOKEN1
-            // }
+            const findings = await agent.handleTransaction(tx);
+            
+            console.log("findings"); 
+            console.log(findings); 
+            console.log("createFinding"); 
+            console.log(createFinding(MOCK_FROM_ADDR,MOCK_SENDER,MOCK_RECIPIENT,MOCK_TOKEN0,MOCK_TOKEN1)); 
+
             expect(findings).toStrictEqual([
                 createFinding(MOCK_FROM_ADDR,MOCK_SENDER,MOCK_RECIPIENT,MOCK_TOKEN0,MOCK_TOKEN1)
             ]);
         }); 
-
 
     });
 

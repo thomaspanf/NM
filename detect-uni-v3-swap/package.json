@@ -1,7 +1,7 @@
 {
-  "name": "forta-agent-starter",
+  "name": "forta-uni-swap-event-agent",
   "version": "0.0.1",
-  "description": "Forta Agent Typescript starter project",
+  "description": "Detects swaps on uni v3 pools",
   "chainIds": [
     1
   ],
