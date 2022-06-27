@@ -28,7 +28,6 @@ async function handleTransaction(txEvent: TransactionEvent) {
   const findings: Finding[] = []
   const event = txEvent.filterLog(SWAP_EVENT);
 
-
   await Promise.all( //waits for each promise to resolve 
     event.map(async swap => { //event.map returns array in which each array element is a promise 
       // event.forEach(async (swap) => { //incorrect await will return a promise and forEach will end the loop there. 
@@ -46,7 +45,7 @@ async function handleTransaction(txEvent: TransactionEvent) {
         console.log("error");
       }
 
-      if (poolAddr !== get_pair_address(token0Addr, token1Addr, fee)) return findings
+      if (poolAddr !== get_pair_address(token0Addr, token1Addr, fee)) return;
       const { sender, recipient } = swap.args;
 
       findings.push(Finding.fromObject({

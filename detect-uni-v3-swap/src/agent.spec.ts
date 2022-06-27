@@ -3,7 +3,12 @@ import {
     FindingSeverity,
     Finding,
     TransactionEvent,
+    EventType,
 } from "forta-agent"; 
+
+import {
+    EventFragment
+  } from "ethers/lib/utils";
 
 import agent from "./agent"; 
 
@@ -83,13 +88,15 @@ describe("Nethermind bot deploy bot test suite", () => {
         
         it("should return finding when swap on uni v3 is detected", async () => {
             //not sure how to push a mock transaction event properly. This handleTransaction(tx) returns []
-            const tx: TransactionEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT);
+            const tx: TransactionEvent = new TestTransactionEvent().addEventLog(SWAP_EVENT); 
+            console.log("printing tx: ")
+            console.log(tx); 
 
             const findings = await agent.handleTransaction(tx);
             
-            console.log("findings"); 
+            console.log("printing findings: "); 
             console.log(findings); 
-            console.log("createFinding"); 
+            console.log("printing createFinding: "); 
             console.log(createFinding(MOCK_FROM_ADDR,MOCK_SENDER,MOCK_RECIPIENT,MOCK_TOKEN0,MOCK_TOKEN1)); 
 
             expect(findings).toStrictEqual([
