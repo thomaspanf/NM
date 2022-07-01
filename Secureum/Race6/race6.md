@@ -1,0 +1,1 @@
+https://ventral.digital/posts/2022/5/16/secureum-bootcamp-epoch-may-race-6
